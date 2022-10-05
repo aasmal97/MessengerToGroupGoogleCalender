@@ -1,10 +1,12 @@
-const requestWrapper = require("../../utilities/requestWrapper");
-const { v4: uuid } = require("uuid");
-const generateJWT = require("../../utilities/generateJWT");
-const watchCalender = async (e) => {
-  const token = e.headers.Authorization;
-  const { googleToken, messengerToken, resourceId } = e.params;
+import requestWrapper from "../../utilities/requestWrapper";
+import {v4 as uuid} from "uuid"
+import generateJWT from "../../utilities/generateJWT"
+import { Request } from "express";
+import grabTokenInfo from "../../utilities/grabTokenInfo";
+const watchCalender = async (e: Request) => {
+  const { token, googleToken, messengerToken } = grabTokenInfo(e);
   if (!token || !googleToken || !messengerToken) return;
+  const {resourceId} = e.params
   const googleRoute = process.env.GOOGLE_ROUTE;
   const resourcePath = `${resourceId}/events`;
   const postURL = `${googleRoute}/${resourcePath}/watch`;
@@ -14,8 +16,8 @@ const watchCalender = async (e) => {
     messengerToken: messengerToken,
   };
 
-  const embeddedToken = await generateJWT(embeddedTokenData);
-  
+  const embeddedToken = await generateJWT( embeddedTokenData);
+
   const config = {
     headers: {
       Authorization: `Bearer ${googleToken}`,
@@ -41,4 +43,4 @@ const watchCalender = async (e) => {
     resourceId: googleResourceId,
   };
 };
-module.exports = watchCalender;
+export default watchCalender;

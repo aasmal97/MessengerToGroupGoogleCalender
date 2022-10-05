@@ -1,6 +1,8 @@
-const requestWrapper = require("../../utilities/requestWrapper");
-const getCalenders = async (e) => {
-  const { googleToken } = e.params;
+import requestWrapper from "../../utilities/requestWrapper";
+import { Request } from "express";
+import grabTokenInfo from "../../utilities/grabTokenInfo";
+const getCalenders = async (e: Request) => {
+  const { googleToken } = grabTokenInfo(e)
   const googleCalenderPath = process.env.GOOGLE_CALENDER_ROUTE;
   const url = `${googleCalenderPath}/users/me/calendarList`;
   const config = {
@@ -12,6 +14,4 @@ const getCalenders = async (e) => {
   const result = await requestWrapper(config);
   if (!result) return [];
 };
-module.exports = {
-  getCalenders,
-};
+export { getCalenders };
